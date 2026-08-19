@@ -1,0 +1,3 @@
+- Building Torii Japanese learning app (year path to N2 with sensei next-moves) [2026-08-19]
+- Saved standalone app at artifacts/torii/index.html (single-file SPA, localStorage progress) [2026-08-19]
+- Brand art: artifacts/imagine_images/395c13a4-9771-4746-af68-a76126b619b8.jpg and artifacts/torii/og.jpg [2026-08-19]

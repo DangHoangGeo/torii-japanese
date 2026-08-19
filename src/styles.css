@@ -1,0 +1,90 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --color-bg: #f1ebe1;
+  --color-surface: #faf6ef;
+  --color-surface-2: #e7dfd2;
+  --color-fg: #1c1712;
+  --color-muted: #6f675e;
+  --color-faint: #9a9186;
+  --color-primary: #9a3324;
+  --color-primary-fg: #faf6ef;
+  --color-ring: #9a3324;
+  --color-border: #d6cdc0;
+  --color-ok: #2f6b4f;
+  --color-warn: #8a5a22;
+  --font-sans: "Figtree", "Hiragino Sans", "Noto Sans JP", "IPAGothic", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Noto Serif JP", "Hiragino Mincho ProN", "IPAPGothic", serif;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+  --radius: 0.75rem;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html,
+  body,
+  #app {
+    min-height: 100%;
+    background: var(--color-bg);
+    color: var(--color-fg);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    font-family: var(--font-display);
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-primary) 22%, transparent);
+    color: var(--color-fg);
+  }
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+.seigaiha {
+  background-color: var(--color-bg);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='42' viewBox='0 0 72 42'><path d='M-6 30a24 24 0 0 1 24-24 24 24 0 0 1 24 24' fill='none' stroke='%239a3324' stroke-opacity='0.07' stroke-width='1.2'/><path d='M30 30a24 24 0 0 1 24-24 24 24 0 0 1 24 24' fill='none' stroke='%239a3324' stroke-opacity='0.07' stroke-width='1.2'/><path d='M-6 42a24 24 0 0 1 24-24 24 24 0 0 1 24 24' fill='none' stroke='%231c1712' stroke-opacity='0.045' stroke-width='1.2'/><path d='M30 42a24 24 0 0 1 24-24 24 24 0 0 1 24 24' fill='none' stroke='%231c1712' stroke-opacity='0.045' stroke-width='1.2'/></svg>");
+}
+
+.paper-shadow {
+  box-shadow:
+    0 1px 0 color-mix(in oklab, var(--color-fg) 6%, transparent),
+    0 18px 40px -28px color-mix(in oklab, var(--color-fg) 35%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
