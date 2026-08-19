@@ -32,8 +32,20 @@ function Dashboard() {
   const moves = suggestNextMoves(snap);
   const localAnalysis = analysisParagraph(snap);
   const levelNow = estimateLevel(state.profile.startLevel, stats.skills);
-  const [aiText, setAiText] = useState<string | null>(null);
-  const [aiMoves, setAiMoves] = useState<typeof moves | null>(null);
+  const storedInsight = useLearner((s) => s.lastInsight);
+  const [aiText, setAiText] = useState<string | null>(storedInsight?.analysis ?? null);
+  const [aiMoves, setAiMoves] = useState<typeof moves | null>(
+    storedInsight?.moves.length
+      ? storedInsight.moves.map((m, i) => ({
+          id: `ai-${i}`,
+          title: m.title,
+          reason: m.reason,
+          href: m.href,
+          minutes: m.minutes,
+          priority: i === 0 ? ("high" as const) : ("medium" as const),
+        }))
+      : null,
+  );
   const [busy, setBusy] = useState(false);
 
   async function askAnalysis() {
@@ -57,6 +69,11 @@ function Dashboard() {
           })),
         );
       }
+      useLearner.getState().setInsight({
+        analysis: res.analysis,
+        moves: res.moves,
+        at: new Date().toISOString(),
+      });
     } catch {
       toast.error("The sensei could not be reached.");
     } finally {

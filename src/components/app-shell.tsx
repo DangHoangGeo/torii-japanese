@@ -7,6 +7,7 @@ import {
   Menu,
   MessageSquare,
   PenLine,
+  Settings,
   Sunrise,
 } from "lucide-react";
 import { useState } from "react";
@@ -27,6 +28,7 @@ const PRIMARY = [
 const SECONDARY = [
   { to: "/app/plan", label: "Year path", icon: CalendarRange },
   { to: "/app/write", label: "Writing", icon: PenLine },
+  { to: "/app/settings", label: "Data", icon: Settings },
 ] as const;
 
 function NavLink({
@@ -90,10 +92,12 @@ export function AppShell() {
         </nav>
         <div className="px-1 pt-3">
           <SignedOut>
-            <p className="mb-2 px-2 text-xs text-faint">Progress is saved on this device. Sign in to keep it across devices.</p>
+            <p className="mb-2 px-2 text-xs text-faint">
+              Saved on this device. Sign in to write Postgres and Firebase.
+            </p>
           </SignedOut>
           <SignedIn>
-            <p className="mb-2 px-2 text-xs text-faint">Cloud snapshot is on.</p>
+            <p className="mb-2 px-2 text-xs text-faint">Cloud snapshot writes Postgres and Firebase.</p>
           </SignedIn>
           <AuthSlot />
         </div>

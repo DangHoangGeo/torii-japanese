@@ -33,6 +33,14 @@ export type Profile = {
 
 export type ChatTurn = { role: "user" | "sensei"; content: string; at: string };
 
+export type InsightMove = { title: string; reason: string; href: string; minutes: number };
+
+export type Insight = {
+  analysis: string;
+  moves: InsightMove[];
+  at: string;
+};
+
 export type LearnerSnapshot = {
   profile: Profile;
   cards: Record<string, SrsCard>;
@@ -42,6 +50,7 @@ export type LearnerSnapshot = {
   chat: ChatTurn[];
   lastStreakDate: string | null;
   streak: number;
+  lastInsight: Insight | null;
 };
 
 export type LearnerState = LearnerSnapshot & {
@@ -51,6 +60,7 @@ export type LearnerState = LearnerSnapshot & {
   addMinutes: (m: number) => void;
   addChat: (turn: ChatTurn) => void;
   addWriting: (text: string, feedback: string) => void;
+  setInsight: (insight: Insight) => void;
   hydrateRemote: (snap: LearnerSnapshot) => void;
   resetAll: () => void;
 };
@@ -92,6 +102,7 @@ export const useLearner = create<LearnerState>()(
       chat: [],
       lastStreakDate: null,
       streak: 0,
+      lastInsight: null,
       completeOnboarding: (p) => {
         set({
           profile: {
@@ -112,6 +123,7 @@ export const useLearner = create<LearnerState>()(
           chat: [],
           streak: 0,
           lastStreakDate: null,
+          lastInsight: null,
         });
       },
       recordReview: (id, kind, grade, isNew) => {
@@ -180,6 +192,12 @@ export const useLearner = create<LearnerState>()(
         );
         set({ writings, profile: { ...state.profile, updatedAt: new Date().toISOString() } });
       },
+      setInsight: (insight) => {
+        set({
+          lastInsight: insight,
+          profile: { ...get().profile, updatedAt: new Date().toISOString() },
+        });
+      },
       hydrateRemote: (snap) => {
         const local = get().profile.updatedAt;
         if (snap.profile.updatedAt && snap.profile.updatedAt < local) return;
@@ -192,6 +210,7 @@ export const useLearner = create<LearnerState>()(
           chat: snap.chat ?? [],
           lastStreakDate: snap.lastStreakDate,
           streak: snap.streak ?? 0,
+          lastInsight: snap.lastInsight ?? null,
         });
       },
       resetAll: () =>
@@ -204,6 +223,7 @@ export const useLearner = create<LearnerState>()(
           chat: [],
           streak: 0,
           lastStreakDate: null,
+          lastInsight: null,
         }),
     }),
     { name: "torii-learner-v1" },
@@ -220,6 +240,7 @@ export function snapshotOf(s: LearnerSnapshot): LearnerSnapshot {
     chat: s.chat,
     lastStreakDate: s.lastStreakDate,
     streak: s.streak,
+    lastInsight: s.lastInsight ?? null,
   };
 }
 

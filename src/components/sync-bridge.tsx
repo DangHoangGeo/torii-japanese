@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
-import { loadRemoteSnapshot, saveRemoteSnapshot } from "@/lib/server/learner";
+import { getDeviceId } from "@/lib/device";
+import {
+  loadGuestSnapshot,
+  loadRemoteSnapshot,
+  saveGuestSnapshot,
+  saveRemoteSnapshot,
+} from "@/lib/server/learner";
 import { snapshotOf, useLearner } from "@/lib/store";
 
 export function useCloudHydration() {
@@ -12,33 +18,57 @@ export function useCloudHydration() {
   useEffect(() => {
     let cancelled = false;
     if (isPending) return;
-    if (!user) {
-      loadedRef.current = true;
-      setReady(true);
-      return;
+
+    const finish = () => {
+      if (!cancelled) {
+        loadedRef.current = true;
+        setReady(true);
+      }
+    };
+
+    if (user) {
+      loadRemoteSnapshot()
+        .then((snap) => {
+          if (!cancelled && snap) useLearner.getState().hydrateRemote(snap);
+        })
+        .catch(() => {})
+        .finally(finish);
+      return () => {
+        cancelled = true;
+      };
     }
-    loadRemoteSnapshot()
+
+    const deviceId = getDeviceId();
+    if (!deviceId) {
+      finish();
+      return () => {
+        cancelled = true;
+      };
+    }
+    loadGuestSnapshot({ data: { deviceId } })
       .then((snap) => {
         if (!cancelled && snap) useLearner.getState().hydrateRemote(snap);
       })
       .catch(() => {})
-      .finally(() => {
-        if (!cancelled) {
-          loadedRef.current = true;
-          setReady(true);
-        }
-      });
+      .finally(finish);
     return () => {
       cancelled = true;
     };
   }, [user, isPending]);
 
   useEffect(() => {
-    if (!user || !loadedRef.current) return;
+    if (!loadedRef.current) return;
     const handle = window.setTimeout(() => {
       const s = useLearner.getState();
       if (!s.profile.onboardingDone) return;
-      void saveRemoteSnapshot({ data: snapshotOf(s) }).catch(() => {});
+      const snap = snapshotOf(s);
+      if (user) {
+        void saveRemoteSnapshot({ data: snap }).catch(() => {});
+        return;
+      }
+      const deviceId = getDeviceId();
+      if (!deviceId) return;
+      void saveGuestSnapshot({ data: { deviceId, snapshot: snap } }).catch(() => {});
     }, 1400);
     return () => window.clearTimeout(handle);
   }, [updatedAt, user]);

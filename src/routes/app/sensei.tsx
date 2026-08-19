@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/sensei")({ component: Sensei });
 
-export function Sensei() {
+function Sensei() {
   const chat = useLearner((s) => s.chat);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);

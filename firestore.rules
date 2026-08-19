@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Writes go through the Torii server (Firebase Admin). Clients do not
+    // talk to Firestore directly — Better Auth is the identity, not Firebase Auth.
+    match /learners/{learnerId} {
+      allow read, write: if false;
+      match /{document=**} {
+        allow read, write: if false;
+      }
+    }
+  }
+}

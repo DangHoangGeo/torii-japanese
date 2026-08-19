@@ -17,6 +17,7 @@ import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppPlanRouteImport } from './routes/app/plan'
 import { Route as AppPracticeRouteImport } from './routes/app/practice'
 import { Route as AppSenseiRouteImport } from './routes/app/sensei'
+import { Route as AppSettingsRouteImport } from './routes/app/settings'
 import { Route as AppStatsRouteImport } from './routes/app/stats'
 import { Route as AppTodayRouteImport } from './routes/app/today'
 import { Route as AppWriteRouteImport } from './routes/app/write'
@@ -63,6 +64,11 @@ const AppSenseiRoute = AppSenseiRouteImport.update({
   path: '/sensei',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppStatsRoute = AppStatsRouteImport.update({
   id: '/stats',
   path: '/stats',
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/app/plan': typeof AppPlanRoute
   '/app/practice': typeof AppPracticeRouteWithChildren
   '/app/sensei': typeof AppSenseiRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/stats': typeof AppStatsRoute
   '/app/today': typeof AppTodayRoute
   '/app/write': typeof AppWriteRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/app/plan': typeof AppPlanRoute
   '/app/practice': typeof AppPracticeRouteWithChildren
   '/app/sensei': typeof AppSenseiRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/stats': typeof AppStatsRoute
   '/app/today': typeof AppTodayRoute
   '/app/write': typeof AppWriteRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/app/plan': typeof AppPlanRoute
   '/app/practice': typeof AppPracticeRouteWithChildren
   '/app/sensei': typeof AppSenseiRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/stats': typeof AppStatsRoute
   '/app/today': typeof AppTodayRoute
   '/app/write': typeof AppWriteRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/app/plan'
     | '/app/practice'
     | '/app/sensei'
+    | '/app/settings'
     | '/app/stats'
     | '/app/today'
     | '/app/write'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/app/plan'
     | '/app/practice'
     | '/app/sensei'
+    | '/app/settings'
     | '/app/stats'
     | '/app/today'
     | '/app/write'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/app/plan'
     | '/app/practice'
     | '/app/sensei'
+    | '/app/settings'
     | '/app/stats'
     | '/app/today'
     | '/app/write'
@@ -247,6 +259,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSenseiRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/stats': {
       id: '/app/stats'
       path: '/stats'
@@ -301,6 +320,7 @@ interface AppRouteRouteChildren {
   AppPlanRoute: typeof AppPlanRoute
   AppPracticeRoute: typeof AppPracticeRouteWithChildren
   AppSenseiRoute: typeof AppSenseiRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppStatsRoute: typeof AppStatsRoute
   AppTodayRoute: typeof AppTodayRoute
   AppWriteRoute: typeof AppWriteRoute
@@ -311,6 +331,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppPlanRoute: AppPlanRoute,
   AppPracticeRoute: AppPracticeRouteWithChildren,
   AppSenseiRoute: AppSenseiRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppStatsRoute: AppStatsRoute,
   AppTodayRoute: AppTodayRoute,
   AppWriteRoute: AppWriteRoute,

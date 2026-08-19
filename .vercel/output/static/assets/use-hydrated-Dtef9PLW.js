@@ -1,1 +1,0 @@
-import{i as e,t}from"./react-SIfiwpqq.js";import{o as n}from"./store-CZAgnUI5.js";var r=e(t(),1);function i(){let[e,t]=(0,r.useState)(()=>typeof window>`u`?!1:n.persist.hasHydrated());return(0,r.useEffect)(()=>{let e=n.persist.onFinishHydration(()=>t(!0));return n.persist.hasHydrated()&&t(!0),e},[]),e}export{i as t};
