@@ -1,0 +1,19 @@
+name: Setup Torii
+description: Node 22, install deps, typecheck
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "22"
+        cache: npm
+    - name: Install
+      shell: bash
+      run: npm ci
+    - name: Typecheck
+      shell: bash
+      run: npm run typecheck
+    - name: Unit tests
+      shell: bash
+      run: npm test

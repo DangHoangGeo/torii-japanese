@@ -1,0 +1,67 @@
+name: Release to Vercel
+
+on:
+  release:
+    types: [published]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      note:
+        description: Optional note for this production deploy
+        required: false
+
+concurrency:
+  group: production-vercel
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  deployments: write
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  production:
+    name: Deploy production
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: production
+      url: ${{ steps.ship.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require Vercel secrets
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          missing=0
+          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing repository secret $name"
+              missing=1
+            fi
+          done
+          if [ "$missing" -eq 1 ]; then
+            echo "Add VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+      - uses: ./.github/actions/setup-torii
+      - id: ship
+        uses: ./.github/actions/vercel-deploy
+        with:
+          token: ${{ secrets.VERCEL_TOKEN }}
+          target: production
+          production: "true"
+      - name: Summary
+        run: |
+          {
+            echo "## Production deploy"
+            echo
+            echo "- URL: ${{ steps.ship.outputs.url }}"
+            echo "- Ref: \`${{ github.ref_name }}\`"
+            echo "- SHA: \`${{ github.sha }}\`"
+            echo "- Event: \`${{ github.event_name }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

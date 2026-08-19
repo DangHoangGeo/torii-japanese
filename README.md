@@ -42,6 +42,36 @@ Default: `AI_PROVIDER=xai` with `XAI_API_KEY` (model `grok-4.5`).
 
 Switching models is a config change. The app already imports `@ai-sdk/openai` and `@ai-sdk/google`.
 
+## Deploy (GitHub → Vercel)
+
+Three workflows ship with the repo:
+
+| Workflow | When | Where |
+| --- | --- | --- |
+| **CI** | Every pull request and push to `main` | Typecheck + unit tests |
+| **Vercel Preview** | Pull requests | Preview URL posted on the PR |
+| **Release to Vercel** | Published GitHub Release, push to `main`, or **Run workflow** | Production |
+
+### One-time Vercel project
+
+1. Create a Vercel project pointed at this repo (Framework: Other, build command `npm run build`).
+2. Put runtime secrets on the **Vercel project** (Production + Preview): `DATABASE_URL`, `XAI_API_KEY`, Firebase keys, Better Auth keys.
+3. Put these three on **GitHub → Settings → Secrets and variables → Actions**:
+
+| Secret | Where to find it |
+| --- | --- |
+| `VERCEL_TOKEN` | [Vercel account tokens](https://vercel.com/account/tokens) |
+| `VERCEL_ORG_ID` | Team / account Settings → General, or `.vercel/project.json` after `vercel link` |
+| `VERCEL_PROJECT_ID` | Project Settings → General |
+
+GitHub Environments `preview` and `production` are created on the first run. Add required reviewers on `production` if you want a gate.
+
+### Ship a production release
+
+1. Merge to `main` (deploys production), or
+2. GitHub → **Releases → Draft a new release** → publish a tag such as `v1.0.0` (deploys that tag), or
+3. **Actions → Release to Vercel → Run workflow**.
+
 ## Scripts
 
 ```

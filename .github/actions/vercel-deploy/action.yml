@@ -1,0 +1,55 @@
+name: Deploy to Vercel
+description: Pull Vercel env, build the Nitro output, deploy --prebuilt
+
+inputs:
+  token:
+    description: Vercel token
+    required: true
+  target:
+    description: preview or production
+    required: true
+  production:
+    description: "true to alias production"
+    required: false
+    default: "false"
+
+outputs:
+  url:
+    description: Deployment URL
+    value: ${{ steps.deploy.outputs.url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install Vercel CLI
+      shell: bash
+      run: npm install --global vercel@latest
+    - name: Pull Vercel project
+      shell: bash
+      env:
+        VERCEL_TOKEN: ${{ inputs.token }}
+      run: vercel pull --yes --environment=${{ inputs.target }} --token="$VERCEL_TOKEN"
+    - name: Build
+      shell: bash
+      env:
+        VERCEL_TOKEN: ${{ inputs.token }}
+      run: |
+        if [ "${{ inputs.production }}" = "true" ]; then
+          vercel build --prod --token="$VERCEL_TOKEN"
+        else
+          vercel build --token="$VERCEL_TOKEN"
+        fi
+    - name: Deploy prebuilt output
+      id: deploy
+      shell: bash
+      env:
+        VERCEL_TOKEN: ${{ inputs.token }}
+      run: |
+        set -euo pipefail
+        if [ "${{ inputs.production }}" = "true" ]; then
+          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+        else
+          url=$(vercel deploy --prebuilt --token="$VERCEL_TOKEN")
+        fi
+        echo "url=$url" >> "$GITHUB_OUTPUT"
+        echo "Deployed $url"
